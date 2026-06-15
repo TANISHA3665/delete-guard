@@ -1,0 +1,39 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports: ["5672:5672", "15672:15672"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  orders:
+    build:
+      context: ../..
+      dockerfile: examples/demo/Dockerfile
+      args: { SERVICE_DIR: examples/demo/services/orders }
+    environment: { AMQP_URL: "amqp://guest:guest@rabbitmq:5672" }
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+    ports: ["3001:3001"]
+
+  reviews:
+    build:
+      context: ../..
+      dockerfile: examples/demo/Dockerfile
+      args: { SERVICE_DIR: examples/demo/services/reviews }
+    environment: { AMQP_URL: "amqp://guest:guest@rabbitmq:5672" }
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+    ports: ["3002:3002"]
+
+  customers:
+    build:
+      context: ../..
+      dockerfile: examples/demo/Dockerfile
+      args: { SERVICE_DIR: examples/demo/services/customers }
+    environment: { AMQP_URL: "amqp://guest:guest@rabbitmq:5672" }
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+    ports: ["3000:3000"]
