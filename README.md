@@ -1,5 +1,8 @@
 # delete-guard
 
+[![ci](https://github.com/TANISHA3665/delete-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/TANISHA3665/delete-guard/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 Distributed referential-integrity checks for deletes — over RabbitMQ.
 
 Before a service deletes an entity, `delete-guard` asks the other services
