@@ -6,12 +6,15 @@ let container: StartedRabbitMQContainer;
 let url: string;
 
 beforeAll(async () => {
+  // Allow time for a cold image pull on the first run / fresh CI runners.
   container = await new RabbitMQContainer('rabbitmq:3.13-management').start();
   url = container.getAmqpUrl();
-}, 60_000);
+}, 120_000);
 
 afterAll(async () => {
-  await container.stop();
+  // Guard against the container never starting (e.g. startup timeout),
+  // so teardown doesn't throw a confusing secondary error.
+  if (container) await container.stop();
 });
 
 describe('DeleteGuard integration', () => {

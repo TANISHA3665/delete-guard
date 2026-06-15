@@ -3,10 +3,13 @@ services:
     image: rabbitmq:3.13-management
     ports: ["5672:5672", "15672:15672"]
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      # check_port_connectivity waits until the AMQP listener (5672) actually
+      # accepts connections — `ping` only proves the Erlang node is up, which
+      # is too early and lets clients hit ECONNREFUSED.
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
       interval: 5s
-      timeout: 5s
-      retries: 10
+      timeout: 10s
+      retries: 15
 
   orders:
     build:
@@ -16,6 +19,9 @@ services:
     environment: { AMQP_URL: "amqp://guest:guest@rabbitmq:5672" }
     depends_on:
       rabbitmq: { condition: service_healthy }
+    # The demo services open a single AMQP connection at startup with no
+    # reconnect; restart so a too-early connection attempt self-heals.
+    restart: on-failure
     ports: ["3001:3001"]
 
   reviews:
@@ -26,6 +32,7 @@ services:
     environment: { AMQP_URL: "amqp://guest:guest@rabbitmq:5672" }
     depends_on:
       rabbitmq: { condition: service_healthy }
+    restart: on-failure
     ports: ["3002:3002"]
 
   customers:
@@ -36,4 +43,5 @@ services:
     environment: { AMQP_URL: "amqp://guest:guest@rabbitmq:5672" }
     depends_on:
       rabbitmq: { condition: service_healthy }
+    restart: on-failure
     ports: ["3000:3000"]
