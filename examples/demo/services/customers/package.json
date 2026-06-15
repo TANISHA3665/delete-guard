@@ -1,0 +1,8 @@
+{
+  "name": "demo-customers",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": { "delete-guard": "*", "express": "^4.19.0" }
+}
