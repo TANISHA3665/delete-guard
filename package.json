@@ -1,0 +1,17 @@
+{
+  "name": "delete-guard-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": ["packages/*", "examples/demo/services/*"],
+  "scripts": {
+    "build": "tsc -b packages/delete-guard",
+    "test": "vitest run",
+    "test:unit": "vitest run packages/delete-guard/test/aggregator.test.ts",
+    "lint": "tsc -b --noEmit packages/delete-guard"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0",
+    "@types/node": "^20.12.0"
+  }
+}
